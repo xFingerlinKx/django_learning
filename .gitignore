@@ -1,3 +1,7 @@
+.idea
+django_3_book/.idea/
+django_3_book/venv/
+
 
 # Created by https://www.toptal.com/developers/gitignore/api/venv,python,pycharm+all,git
 # Edit at https://www.toptal.com/developers/gitignore?templates=venv,python,pycharm+all,git
