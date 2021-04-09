@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 
+from . models import Bb
 
 """
 Контроллер Django — это код, запускаемый при обращении по интернет-адресу
@@ -13,4 +14,7 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return HttpResponse('Здесь будет выведен список объявлений.')
+    title_str = 'Список объявлений\r\n\r\n\r\n'
+    for bb in Bb.objects.order_by('published'):
+        title_str += bb.title + '\r\n' + bb.content + '\r\n\r\n'
+    return HttpResponse(title_str, content_type='text/plain; charset=utf-8')
