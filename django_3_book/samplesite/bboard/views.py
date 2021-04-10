@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.shortcuts import render
 
 from . models import Bb
 
@@ -14,7 +14,9 @@ from . models import Bb
 
 
 def index(request):
-    title_str = 'Список объявлений\r\n\r\n\r\n'
-    for bb in Bb.objects.order_by('published'):
-        title_str += bb.title + '\r\n' + bb.content + '\r\n\r\n'
-    return HttpResponse(title_str, content_type='text/plain; charset=utf-8')
+    bbs = Bb.objects.order_by('published')
+    return render(
+        request=request,
+        template_name='bboard/index.html',
+        context={'bbs': bbs},
+    )
