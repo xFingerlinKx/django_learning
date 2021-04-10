@@ -12,25 +12,39 @@ from django.db import models
 
 
 class Bb(models.Model):
+    """ Модель объявления """
+
+    class Meta:
+        # название модели во множественном числе
+        verbose_name_plural = 'Объявления'
+        # название модели в единственном числе
+        verbose_name = 'Объявление'
+        # последовательность полей, по которым по умолчанию будет выполняться сортировка записей
+        ordering = ('-published',)
+
     # по умолчанию любое поле обязательно к заполнению
     title = models.CharField(
+        verbose_name='Товар',
         max_length=50,
     )
     """ Заголовк объявления с названием продаваемого товара """
 
     content = models.TextField(
+        verbose_name='Описание',
         null=True,
         blank=True,
     )
     """ Текст объявления, описание товара """
 
     price = models.FloatField(
+        verbose_name='Цена',
         null=True,
         blank=True,
     )
     """ Цена """
 
     published = models.DateTimeField(
+        verbose_name='Дата публикации',
         auto_now_add=True,
         db_index=True,
     )

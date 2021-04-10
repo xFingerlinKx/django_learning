@@ -14,9 +14,8 @@ from . models import Bb
 
 
 def index(request):
-    bbs = Bb.objects.order_by('published')
     return render(
         request=request,
         template_name='bboard/index.html',
-        context={'bbs': bbs},
+        context={'bbs': Bb.objects.all()},
     )
