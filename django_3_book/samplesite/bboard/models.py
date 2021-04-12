@@ -14,14 +14,6 @@ from django.db import models
 class Bb(models.Model):
     """ Модель объявления """
 
-    class Meta:
-        # название модели во множественном числе
-        verbose_name_plural = 'Объявления'
-        # название модели в единственном числе
-        verbose_name = 'Объявление'
-        # последовательность полей, по которым по умолчанию будет выполняться сортировка записей
-        ordering = ('-published',)
-
     # по умолчанию любое поле обязательно к заполнению
     title = models.CharField(
         verbose_name='Товар',
@@ -50,3 +42,40 @@ class Bb(models.Model):
     )
     """ Дата публикации """
     # auto_now_add - при создании новой записи заносится в это поле текущие дата и время
+
+    rubric_id = models.ForeignKey(
+        'Rubric',
+        verbose_name='Рубрика',
+        null=True,
+        on_delete=models.PROTECT,
+    )
+    """ Рубрика """
+    # Первым параметром конструктору этого класса (ForeignKey) передается строка с именем класса
+    # первичной модели, поскольку вторичная модель у нас объявлена раньше первичной.
+    # on_delete=models.PROTECT - этого параметра запрещает каскадные удаления
+
+    class Meta:
+        # название модели во множественном числе
+        verbose_name_plural = 'Объявления'
+        # название модели в единственном числе
+        verbose_name = 'Объявление'
+        # последовательность полей, по которым по умолчанию будет выполняться сортировка записей
+        ordering = ('-published',)
+
+
+class Rubric(models.Model):
+    """ Рубрика объявления """
+
+    name = models.CharField(
+        max_length=20,
+        db_index=True,
+        verbose_name='Название',
+    )
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = 'Рубрики'
+        verbose_name = 'Рубрика'
+        ordering = ('name',)
