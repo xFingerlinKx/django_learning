@@ -6,6 +6,7 @@
 </head>
 <body>
     <h1>Объявления</h1>
+    <a href="{% url 'add' %}">Добавить</a>
     <div>
         <a href="{% url 'index' %}">Главная</a>
         {% for rubric in rubrics %}
