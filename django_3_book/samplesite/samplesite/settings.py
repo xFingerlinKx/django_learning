@@ -31,25 +31,31 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'django.contrib.admin',  # административный веб-сайт Django
     'django.contrib.auth',  # реализует подсистему разграничения доступа
-    'django.contrib.contenttypes',
+    'django.contrib.contenttypes',  # хранит список всех моделей, объявленных во всехприложениях сайта.
+                                    # Необходимо при создании полиморфных связей между моделями
     'django.contrib.sessions',  # реализует подсистему, обслуживающую серверные сессии
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    'django.contrib.messages',  # выводит всплывающие сообщения
+    'django.contrib.staticfiles',  # обрабатывает статические файлы
     # подключаемые приложения
     'bboard.apps.BboardConfig',
 
 ]
-
+# Посредник (middleware) Django — это программный модуль, выполняющий предварительную
+# обработку клиентского запроса перед передачей его контроллеру и окончательную обработку ответа,
+# сгенерированного контроллером, перед его отправкой клиенту.
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',  # реализует дополнительную защиту сайта от сетевых атак
+    'django.contrib.sessions.middleware.SessionMiddleware',  # обрабатывает серверные сессии на низком уровне
+    'django.middleware.common.CommonMiddleware',  # участвует в предварительной обработке запросов
+    'django.middleware.csrf.CsrfViewMiddleware',  # осуществляет защиту ОТ межсайтовых атак при обработке данных,
+                                                  # переданных сайту HTTP-методом POST
+    'django.contrib.auth.middleware.AuthenticationMiddleware',  # добавляет в объект запроса атрибут, хранящий текущего
+    # пользователя. Через этот атрибут в контроллерах и шаблонах можно выяснить, какой пользователь
+    # выполнил вход насайт и выполнил ли вообще
+    'django.contrib.messages.middleware.MessageMiddleware',  # обрабатывает всплывающие сообщения на низком уровне
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',  # реализует дополнительную защиту сайта от сетевых атак
 ]
 
 ROOT_URLCONF = 'samplesite.urls'
@@ -106,14 +112,23 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
+# LANGUAGE_CODE — код языки, на котором будут выводиться системные сообщения
+# и страницы административного сайта, в виде строки
 LANGUAGE_CODE = 'ru'
-
+# TIME_ZONE - обозначение временной зоны в виде строки. По умолчанию — "America/Chicago".
+# Однако сразу же при создании проекта ему присваивается значение "UTC" (всемирное координированное время)
 TIME_ZONE = 'UTC'
-
+# USE_I18N — если True, будет активизирована встроенная в Django система автоматического перевода на язык,
+# записанный в параметре LANGUAGE_CODE, после чего все системные сообщения и страницы административного
+# сайта будут выводиться на этом языке. Если False, автоматический перевод выполняться не
+# будет, и сообщения и страницы станут выводиться на английском языке
 USE_I18N = True
-
+# USE_L10N - если True, числа, значения даты и времени при выводе будут форматироваться по правилам языка из параметра
+# LANGUAGE_CODE. Если False, все эти значения будут форматироваться согласно настройкам, заданным в проекте
 USE_L10N = True
-
+# если True, Django будет хранить значения даты и времени с указанием временной зоны, в этом случае параметр
+# TIME_ZONE указывает временную зону по умолчанию. Если False, значения даты и времени будут храниться без
+# отметки временной зоны, и временную зону для них укажет параметр TIME_ZONE
 USE_TZ = True
 
 
