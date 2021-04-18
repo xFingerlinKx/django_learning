@@ -1,31 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Добавление объявления :: Доска объявлений</title>
-</head>
-<body>
-    <h1>Добавление объявления</h1>
-    <div>
-        <a href="{% url 'index' %}">Главная</a>
-        {% for rubric in rubrics %}
-        <a href="{% url 'by_rubric' rubric.pk %}"> {{ rubric.name }}</a>
-        {% endfor %}
-    </div>
-    <!--
-    В теге <fom> мы указали метод отправки данных POST, но не записали интернет-адрес,
-    по которому будут отправлены данные из формы. В этом случае данные будут отправлены
-    по тому же интернет-адресу, с которого была загружена текущая страница, т. е. в нашем
-    случае тому же контроллеру-классу BbCreateView, который благополучно обработает и сохранит их
-    -->
-    <form method="POST">
-        {% csrf_token %}
-        <!--
-        для вывода формы, элементы управления которой находятся на отдельных абзацах,
-        применяется метод as p () класса формы
-        -->
-        {{ form.as_p}}
-        <input type="submit" value="Добавить">
-    </form>
-</body>
-</html>
+{% extends "layout/basic.html" %}
+
+{% block title %}Добавление объявления{% endblock %}
+
+{% block content %}
+<h2>Добавление объявления</h2>
+<form method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Добавить">
+</form>
+{% endblock %}
