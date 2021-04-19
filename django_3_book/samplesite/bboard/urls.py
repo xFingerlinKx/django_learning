@@ -16,7 +16,7 @@ urlpatterns = [
     # by rubric, передав ему в качестве параметра выделенный из интернет-адреса ключ рубрики 2
 
     # Имя маршрута указывается в именованном параметре name функции path()
-    path('<int:rubric_id>/', by_rubric, name='by_rubric'),
+    path('<int:rubric>/', by_rubric, name='by_rubric'),
     # с пустой строкой связываем функцию контроллера index() - samplesite.bboard.views.index
     path('', index, name='index')
 ]

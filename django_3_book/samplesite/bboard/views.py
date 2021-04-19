@@ -59,16 +59,16 @@ def index(request):
     )
 
 
-def by_rubric(request, rubric_id):
+def by_rubric(request, rubric):
     """
     В объявление функции мы добавили параметр rubric id — именно ему будет присвоено
     значение URL-параметра, выбранное из интернет-адреса. В состав контекста шаблона
     поместили список объявлений, отфильтрованных по полю внешнего ключа rubric_id,
     список всех рубрик и текущую рубрику (она нужна нам, чтобы вывести на странице ее название).
     """
-    bbs = Bb.objects.filter(rubric_id=rubric_id)
+    bbs = Bb.objects.filter(rubric=rubric)
     rubrics = Rubric.objects.all()
-    current_rubric = Rubric.objects.get(pk=rubric_id)
+    current_rubric = Rubric.objects.get(pk=rubric)
     context = {
         'bbs': bbs,
         'rubrics': rubrics,

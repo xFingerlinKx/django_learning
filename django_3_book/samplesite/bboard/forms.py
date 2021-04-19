@@ -10,4 +10,4 @@ class BbForm(ModelForm):
         # класс модель, с которой связана форма
         model = Bb
         # последовательность полей, которые должны присутствовать в форме
-        fields = ('title', 'content', 'price', 'rubric_id')
+        fields = ('title', 'content', 'price', 'rubric')

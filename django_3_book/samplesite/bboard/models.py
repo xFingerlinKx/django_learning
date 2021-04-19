@@ -80,7 +80,7 @@ class Bb(models.Model):
     """ Дата публикации """
     # auto_now_add - при создании новой записи заносится в это поле текущие дата и время
 
-    rubric_id = models.ForeignKey(
+    rubric = models.ForeignKey(
         'Rubric',
         verbose_name='Рубрика',
         null=True,
