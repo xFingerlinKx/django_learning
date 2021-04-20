@@ -4,9 +4,9 @@
 {% for bb in bbs %}
     <div>
         <h2>{{ bb.title }}</h2>
-        <p>{{ bb.content }}</p>
-        <p>Цена: {{ bb.price }}</p>
         <p><a href="{% url 'by_rubric' bb.rubric.pk %}">{{ bb.rubric.name }}</a></p>
+        <p>{{ bb.content }}</p>
+        <p>{{ bb.title_and_price }}</p>
         <p>{{ bb.published|date:"d.m.Y H:i:s" }}</p>
     </div>
 {% endfor %}
