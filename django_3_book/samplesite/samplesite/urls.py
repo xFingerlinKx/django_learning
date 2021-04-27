@@ -38,6 +38,7 @@ Path в качестве параметров принимает строку с
 
 
 urlpatterns = [
-    path('bboard/', include('bboard.urls')),
+    # Корневой маршрут, указывающий на "корень" самого сайта
+    path('', include('bboard.urls')),
     path('admin/', admin.site.urls),
 ]
