@@ -1,10 +1,11 @@
 from django.urls import path
 # noinspection PyUnresolvedReferences
 from bboard.views import index, by_rubric, BbCreateView
+from .views import add_and_save
 
 
 urlpatterns = [
-    path('add/', BbCreateView.as_view(), name='add'),
+    path('add/', add_and_save, name='add'),
     # угловые скобки помечают описание URL-параметра, языковая конструкция int задает
     # целочисленный тип этого параметра, a rubric id — имя параметра контроллера,
     # которому будет присвоено значение этого URL-параметра. Созданному маршруту мы

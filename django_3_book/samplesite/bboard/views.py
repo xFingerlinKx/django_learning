@@ -1,6 +1,7 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic.edit import CreateView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 
 from . models import Bb, Rubric
 from .forms import BbForm
@@ -13,6 +14,10 @@ from .forms import BbForm
 принимает экземпляр класса HttpRequest, хранящий различные сведения о полученном запросе: 
 запрашиваемый интернет-адрес, данные, полученные от посетителя, служебную информацию от самого 
 веб-обозревателя и пр. По традиции этот параметр называется request. В нашем случае мы его никак не используем.
+
+Контроллер-функция должен возвращать в качестве результата экземпляр класса HttpResponse, Также объявленного в модуле 
+django.http, или какого-либо из его подклассов. Этот экземпляр класса представляет ответ, отсылаемый клиенту 
+(веб-страница, обычный текстовый документ, файл, данные в формате JSON, перенаправление или сообщение об ошибке).
 """
 
 
@@ -61,9 +66,11 @@ def index(request):
 
 def by_rubric(request, rubric):
     """
-    В объявление функции мы добавили параметр rubric id — именно ему будет присвоено
+    Ввыводит страницу с объявлениями, относящимися к выбранной посетителем рубрике.
+
+    В объявление функции мы добавили параметр rubric — именно ему будет присвоено
     значение URL-параметра, выбранное из интернет-адреса. В состав контекста шаблона
-    поместили список объявлений, отфильтрованных по полю внешнего ключа rubric_id,
+    поместили список объявлений, отфильтрованных по полю внешнего ключа rubric,
     список всех рубрик и текущую рубрику (она нужна нам, чтобы вывести на странице ее название).
     """
     bbs = Bb.objects.filter(rubric=rubric)
@@ -79,3 +86,36 @@ def by_rubric(request, rubric):
         template_name='bboard/by_rubric.html',
         context=context
     )
+
+
+def add(request):
+    """
+    Функция-контроллер, которая создает форму и выводит на экран страницу добавленя объявления.
+
+    :param request: экземпляр класса HttpRequest
+    :return: экземпляр класса HttpResponse
+    """
+    bbf = BbForm()
+    context = {'form': bbf}
+    return render(request=request, template_name='bboard/create.html', context=context)
+
+
+def add_and_save(request):
+    """ Сохраняет новое объявление в БД """
+    if request.method == 'POST':
+        bbf = BbForm(request.POST)
+        if bbf.is_valid():
+            bbf.save()
+            return HttpResponseRedirect(
+                reverse(
+                    viewname='by_rubric',
+                    kwargs={'rubric': bbf.cleaned_data['rubric'].pk}
+                )
+            )
+        else:
+            context = {'form': bbf}
+            return render(request, 'bboard/create.html', context)
+    else:
+        bbf = BbForm()
+        context = {'form': bbf}
+        return render(request, 'bboard/create.html', context)
