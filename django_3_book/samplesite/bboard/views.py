@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, get_list_or_404
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy, reverse
 
@@ -64,18 +64,18 @@ def index(request):
     )
 
 
-def by_rubric(request, rubric):
+def by_rubric(request, rubric_id):
     """
     Ввыводит страницу с объявлениями, относящимися к выбранной посетителем рубрике.
 
-    В объявление функции мы добавили параметр rubric — именно ему будет присвоено
+    В объявление функции мы добавили параметр rubric_id — именно ему будет присвоено
     значение URL-параметра, выбранное из интернет-адреса. В состав контекста шаблона
     поместили список объявлений, отфильтрованных по полю внешнего ключа rubric,
     список всех рубрик и текущую рубрику (она нужна нам, чтобы вывести на странице ее название).
     """
-    bbs = Bb.objects.filter(rubric=rubric)
+    bbs = get_list_or_404(Bb, rubric=rubric_id)
     rubrics = Rubric.objects.all()
-    current_rubric = Rubric.objects.get(pk=rubric)
+    current_rubric = Rubric.objects.get(pk=rubric_id)
     context = {
         'bbs': bbs,
         'rubrics': rubrics,
@@ -109,7 +109,7 @@ def add_and_save(request):
             return HttpResponseRedirect(
                 reverse(
                     viewname='by_rubric',
-                    kwargs={'rubric': bbf.cleaned_data['rubric'].pk}
+                    kwargs={'rubric_id': bbf.cleaned_data['rubric'].pk}
                 )
             )
         else:

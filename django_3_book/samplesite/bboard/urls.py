@@ -25,7 +25,7 @@ urlpatterns = [
     # urlpatterns = [
     #     path(’<int:rubric_id>/', by_rubric, vals),
     # ]
-    path('<int:rubric>/', by_rubric, name='by_rubric'),
+    path('<int:rubric_id>/', by_rubric, name='by_rubric'),
     # Корневой маршрут, указывающий на "корень” приложения bboard
     # с пустой строкой связываем функцию контроллера index() - samplesite.bboard.views.index
     path('', index, name='index')
