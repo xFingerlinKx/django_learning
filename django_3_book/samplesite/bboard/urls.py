@@ -1,11 +1,15 @@
 from django.urls import path
 # noinspection PyUnresolvedReferences
-from bboard.views import index, by_rubric, BbCreateView
+from bboard.views import index, by_rubric, BbCreateView, BbDetailView, BbRubricView, BbByRubricListView, BbAddView
 from .views import add_and_save
 
 
 urlpatterns = [
-    path('add/', add_and_save, name='add'),
+    # path('add/', add_and_save, name='add'),
+    path('add/', BbAddView.as_view(), name='add'),
+    # через класс-контроллер
+    # path(’add/', BbCreateView.as_view(model=Bb, template_name=’bboard/create.html’)),
+
     # угловые скобки помечают описание URL-параметра, языковая конструкция int задает
     # целочисленный тип этого параметра, a rubric id — имя параметра контроллера,
     # которому будет присвоено значение этого URL-параметра. Созданному маршруту мы
@@ -25,8 +29,12 @@ urlpatterns = [
     # urlpatterns = [
     #     path(’<int:rubric_id>/', by_rubric, vals),
     # ]
-    path('<int:rubric_id>/', by_rubric, name='by_rubric'),
+    path('<int:rubric_id>/', BbRubricView.as_view(), name='by_rubric'),
+    # todo: вроде как отображение такое же как и у BbRubricView
+    # path('<int:rubric_id>/', BbByRubricListView.as_view(), name='by_rubric'),
+
     # Корневой маршрут, указывающий на "корень” приложения bboard
     # с пустой строкой связываем функцию контроллера index() - samplesite.bboard.views.index
+    path('detail/<int:pk>/', BbDetailView.as_view(), name='detail'),
     path('', index, name='index')
 ]

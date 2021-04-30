@@ -1,6 +1,9 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_list_or_404
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, FormView
+from django.views.generic.base import TemplateView
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
 from django.urls import reverse_lazy, reverse
 
 from . models import Bb, Rubric
@@ -21,10 +24,145 @@ django.http, или какого-либо из его подклассов. Эт
 """
 
 
+def index(request):
+    bbs = Bb.objects.all()
+    rubrics = Rubric.objects.all()
+    return render(
+        request=request,
+        template_name='bboard/index.html',
+        context={
+            'bbs': bbs,
+            'rubrics': rubrics,
+        }
+    )
+
+
+class BbDetailView(DetailView):
+    """
+    Форма объявления.
+
+    Контроллер-класс Detailview наследует классы View, SingleObjectMixin и SingieObjectTemplateResponseMixin.
+    Он ищет запись по полученным значениям ключа или слага, заносит ее в атрибут object
+    (чтобы успешно работали наследуемые им примеси) и выводит на экран страницу с содержимым этой записи.
+    """
+    model = Bb
+
+    # Компактность кода контроллера обусловлена в том числе и тем, что он следует
+    # соглашениям. Так, в нем не указан путь к шаблону — значит, класс будет искать
+    # шаблон со сформированным по умолчанию путем bboard\bb_detail.html.
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['rubrics'] = Rubric.objects.all()
+        return context
+
+
+class BbByRubricListView(ListView):
+    """
+    Класс-контроллер. Наследует классы View, MultipleObjectMixin и MultipleObjectTemplateResponseMixin.
+    Извлекает из модели набор записей, записывает его в атрибут object_list (чтобы успешно работали наследуемые
+    им миксины) и выводит на экран страницу со списком записей.
+    """
+    template_name = 'bboard/by_rubric.html'
+    context_object_name = 'bbs'
+
+    def get_queryset(self):
+        return Bb.objects.filter(rubric=self.kwargs['rubric_id'])
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['rubrics'] = Rubric.objects.all()
+        context['current_rubric'] = Rubric.objects.get(pk=self.kwargs['rubric_id'])
+        return context
+
+
+class BbRubricView(TemplateView):
+    """
+    Форма страницы с объявлениями в рубрике.
+
+    Контроллер-класс Templateview наследует классы View, ContextMixin И TemplateResponseMixin.
+    Он автоматически выполняет рендеринг шаблона и отправку ответа при получении запроса по методу GET.
+    """
+    template_name = 'bboard/by_rubric.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['bbs'] = Bb.objects.filter(rubric=context['rubric_id'])
+        context['rubrics'] = Rubric.objects.all()
+        context['current_rubric'] = Rubric.objects.get(pk=context['rubric_id'])
+        return context
+
+
+def by_rubric(request, rubric_id):
+    """
+    Функция-контроллер.
+    todo: вместо нее используется класс-контроллер BbRubricView
+    Ввыводит страницу с объявлениями, относящимися к выбранной посетителем рубрике.
+
+    В объявление функции мы добавили параметр rubric_id — именно ему будет присвоено
+    значение URL-параметра, выбранное из интернет-адреса. В состав контекста шаблона
+    поместили список объявлений, отфильтрованных по полю внешнего ключа rubric,
+    список всех рубрик и текущую рубрику (она нужна нам, чтобы вывести на странице ее название).
+    """
+    bbs = get_list_or_404(Bb, rubric=rubric_id)
+    rubrics = Rubric.objects.all()
+    current_rubric = Rubric.objects.get(pk=rubric_id)
+    context = {
+        'bbs': bbs,
+        'rubrics': rubrics,
+        'current_rubric': current_rubric,
+    }
+    return render(
+        request=request,
+        template_name='bboard/by_rubric.html',
+        context=context
+    )
+
+
+class BbAddView(FormView):
+    """
+    Класс-контроллер, производный от FormMixin, ProcessFormView и TemplateResponseMixin, создает форму,
+    выводит на экран страницу с этой формой, проверяет на корректность введенные данные и, в случае
+    отрицательного результата проверки, выводит страницу с формой повторно. Нам остается только
+    реализовать обработку корректных данных, переопределив метод form valid().
+    """
+    template_name = 'bboard/create.html'
+    form_class = BbForm
+    initial = {'price': 0.0}
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['rubrics'] = Rubric.objects.all()
+        return context
+
+    def form_valid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    def get_form(self, form_class=None):
+        """
+        При написании этого класса мы столкнемся с проблемой. Чтобы после сохранения объявления сформировать
+        интернет-адрес для перенаправления, нам нужно получить значение ключа рубрики, к которой относится
+        добавленное объявление. Поэтому мы переопределили метод get_form(), в котором сохранили созданную
+        форму в атрибуте object. После этого в коде метода get_success_url () без проблем
+        сможем получить доступ к форме и занесенным в нее данным.
+        """
+        self.object = super().get_form(form_class)
+        return self.object
+
+    def get_success_url(self) :
+        return reverse(
+            'by_rubric',
+            kwargs={'rubric_id': self.object.cleaned_data['rubric'].pk}
+        )
+
+
+
 class BbCreateView(CreateView):
     """
-    Класс-контроллер.
+    Форма создания объявления.
 
+    Класс-контроллер.
     Базовый класс "знает", как создать форму, вывести на экран страницу с применением
     указанного шаблона, получить занесенные в форму данные, проверить их, сохранить в
     новой записи модели и перенаправить пользователя в случае успеха на заданный интернет-адрес.
@@ -49,43 +187,6 @@ class BbCreateView(CreateView):
         context = super().get_context_data(**kwargs)
         context['rubrics'] = Rubric.objects.all()
         return context
-
-
-def index(request):
-    bbs = Bb.objects.all()
-    rubrics = Rubric.objects.all()
-    return render(
-        request=request,
-        template_name='bboard/index.html',
-        context={
-            'bbs': bbs,
-            'rubrics': rubrics,
-        }
-    )
-
-
-def by_rubric(request, rubric_id):
-    """
-    Ввыводит страницу с объявлениями, относящимися к выбранной посетителем рубрике.
-
-    В объявление функции мы добавили параметр rubric_id — именно ему будет присвоено
-    значение URL-параметра, выбранное из интернет-адреса. В состав контекста шаблона
-    поместили список объявлений, отфильтрованных по полю внешнего ключа rubric,
-    список всех рубрик и текущую рубрику (она нужна нам, чтобы вывести на странице ее название).
-    """
-    bbs = get_list_or_404(Bb, rubric=rubric_id)
-    rubrics = Rubric.objects.all()
-    current_rubric = Rubric.objects.get(pk=rubric_id)
-    context = {
-        'bbs': bbs,
-        'rubrics': rubrics,
-        'current_rubric': current_rubric,
-    }
-    return render(
-        request=request,
-        template_name='bboard/by_rubric.html',
-        context=context
-    )
 
 
 def add(request):
