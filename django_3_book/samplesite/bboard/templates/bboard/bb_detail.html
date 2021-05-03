@@ -8,4 +8,6 @@
 <h2>{{ bb.title }}</h2>
 <p>{{ bb.content }}</p>
 <p>Цена: {{ bb.price }}</p>
+<a href="{% url 'edit' bb.pk %}">Иcправить</a><br>
+<a href="{% url 'delete' bb.pk %}">Удалить</a><br>
 {% endblock %}

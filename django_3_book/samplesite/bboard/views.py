@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_list_or_404
-from django.views.generic.edit import CreateView, FormView
+from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
@@ -150,12 +150,11 @@ class BbAddView(FormView):
         self.object = super().get_form(form_class)
         return self.object
 
-    def get_success_url(self) :
+    def get_success_url(self):
         return reverse(
             'by_rubric',
             kwargs={'rubric_id': self.object.cleaned_data['rubric'].pk}
         )
-
 
 
 class BbCreateView(CreateView):
@@ -220,3 +219,39 @@ def add_and_save(request):
         bbf = BbForm()
         context = {'form': bbf}
         return render(request, 'bboard/create.html', context)
+
+
+class BbEditView(UpdateView):
+    """
+    Контроллер UpdateView наследует от классов ProcessFormView, ModelFormMixin и SingleObjectTemplateResponseMixin.
+    Он ищет запись по полученным ИЗ URL-параметра ключу или слагу, выводит страницу с формой для ее правки, проверяет
+    и сохраняет исправленные данные.
+    """
+    model = Bb
+    form_class = BbForm
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['rubrics'] = Rubric.objects.all()
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('detail', kwargs={'pk': self.get_object().id})
+
+
+class BbDeleteView(DeleteView):
+    """
+    Удаление объявления.
+
+    Контроллер UpdateView наследует от классов ProcessFormView, ModelFormMixin и SingleObjectTemplateResponseMixin.
+    Он ищет запись по полученным ИЗ URL-параметра ключу или слагу, выводит страницу с формой для ее правки, проверяет
+    и сохраняет исправленные данные.
+    """
+    model = Bb
+    form_class = BbForm
+    success_url = '/'
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context['rubrics'] = Rubric.objects.all()
+        return context

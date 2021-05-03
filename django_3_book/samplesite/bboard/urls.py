@@ -1,6 +1,16 @@
 from django.urls import path
 # noinspection PyUnresolvedReferences
-from bboard.views import index, by_rubric, BbCreateView, BbDetailView, BbRubricView, BbByRubricListView, BbAddView
+from bboard.views import (
+    index,
+    by_rubric,
+    BbCreateView,
+    BbDetailView,
+    BbRubricView,
+    BbByRubricListView,
+    BbAddView,
+    BbEditView,
+    BbDeleteView,
+)
 from .views import add_and_save
 
 
@@ -36,5 +46,7 @@ urlpatterns = [
     # Корневой маршрут, указывающий на "корень” приложения bboard
     # с пустой строкой связываем функцию контроллера index() - samplesite.bboard.views.index
     path('detail/<int:pk>/', BbDetailView.as_view(), name='detail'),
+    path('detail/<int:pk>/edit/', BbEditView.as_view(), name='edit'),
+    path('detail/<int:pk>/delete/', BbDeleteView.as_view(), name='delete'),
     path('', index, name='index')
 ]
