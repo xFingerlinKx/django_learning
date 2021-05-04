@@ -3,14 +3,33 @@
 {% block title %}{{ current_rubric.name }}{% endblock %}
 
 {% block content %}
+
+{% now 'SHORT_DATE_FORMAT' %}
+
+{% verbatim %}
+<br>
+<р>Текущие дата и время выводятся тегом {% now %}.</р>
+{% endverbatim %}
+
 <h2>Рубрика: {{ current_rubric.name }}</h2>
+
+{% with bb_count=bbs.count %}
+{% if bb_count > 0 %}
+    <p>Количество объявлений в рубрике: {{ bb_count }}.</p>
+{% endif%}
+{% endwith %}
 
 {% for bb in bbs %}
 <div>
     <h2>{{ bb.title }}</h2>
     <h4><a href="{% url 'detail' pk=bb.pk %}">{{ bb.title }}</a></h4>
     <p>{{ bb.content }}</p>
+    {{ bb.price|default:'У товара нет цены' }}
     <p>{{ bb.published|date:"d.m.Y H:i:s" }}</p>
 </div>
 {% endfor %}
+
+{{ True|yesno }}, {{ False|yesno }}, {{ None|yesno}}
+{{ True|yesno:'так точно,никак нет,дело темное' }}
+
 {% endblock %}

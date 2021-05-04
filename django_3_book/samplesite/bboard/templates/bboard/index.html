@@ -1,13 +1,34 @@
 {% extends "layout/basic.html" %}
 
 {% block content %}
+
+{% now ’SHORT_DATETIME_FORMAT’ %}
+
+{% if bbs %}
+<h2>Список объявлений</h2>
+{% else %}
+<p>Объявлений нет</p>
+{% endif %}
+
+{% with bb_count=bbs.count %}
+{% if bb_count > 0 %}
+    <p>Количество объявлений: {{ bb_count }}.</p>
+{% endif%}
+{% endwith %}
+
 {% for bb in bbs %}
-    <div>
-        <h2>{{ bb.title }}</h2>
+<!-- BbIndexView - todo: не выводит ничего на странице -->
+<!--    <p>-->
+<!--        {% for d in date_list %}-->
+<!--        {{ d.year }}-->
+<!--        {% endfor %}-->
+<!--    </p>-->
+    <div class="{% cycle 'bbl' 'bb2' 'bb3' %}">
+        <h2>№: {{ forloop.counter }} {{ bb.title }}</h2>
         <p><a href="{% url 'detail' pk=bb.pk %}">{{ bb.title }}</a></p>
         <p><a href="{% url 'by_rubric' bb.rubric.pk %}">{{ bb.rubric.name }}</a></p>
         <p>{{ bb.content }}</p>
-        <p>{{ bb.title_and_price }}</p>
+        {{ bb.price|default:'У товара нет цены' }}
         <p>{{ bb.published|date:"d.m.Y H:i:s" }}</p>
     </div>
 {% endfor %}

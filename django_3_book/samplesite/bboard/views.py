@@ -4,6 +4,7 @@ from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteVi
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
+from django.views.generic.dates import ArchiveIndexView
 from django.urls import reverse_lazy, reverse
 
 from . models import Bb, Rubric
@@ -254,4 +255,23 @@ class BbDeleteView(DeleteView):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context['rubrics'] = Rubric.objects.all()
+        return context
+
+
+class BbIndexView(ArchiveIndexView):
+    """
+    Контроллер-класс ArchivelndexView наследует от классов BaseDateListView и MuitipieObjectTempiateResponseMixin.
+    Он выводит хронологический список записей, отсортированных по убыванию значения заданного поля.
+    todo: не выводит ничего на странице
+    """
+    model = Bb
+    date_field = 'published'
+    date_list_period = 'year'
+    template_name = 'bboard/index.html'
+    context_object_name = 'bbs'
+    allow_empty = True
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data()
+        context['rubrics'] = Rubric.object.all()
         return context
