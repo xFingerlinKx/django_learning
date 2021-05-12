@@ -1,5 +1,21 @@
 body {
-    background-color: #C0C0C0;
+    background-color: #5CDB95;
+}
+
+body nav a {
+  color: #05386B;
+}
+
+body section h1 {
+  color: #FF652F;
+}
+
+body section h2 {
+  color: #05386B;
+}
+
+div p a {
+  color: #116466;
 }
 
 header h1 {
@@ -7,6 +23,7 @@ header h1 {
     text-transform: uppercase;
     text-align: center;
     background: url("bg.jpg") left / auto 100% no-repeat;
+    color: #5680E9;
 }
 
 nav {
@@ -22,4 +39,12 @@ nav a {
 
 section {
     margin-left: 170px;
+}
+
+section div h2 {
+  color: #EDF5E1;
+}
+
+section div p {
+  color: #2E9CCA;
 }
