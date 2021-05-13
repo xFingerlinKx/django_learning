@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'django.contrib.admin',  # административный веб-сайт Django
     'django.contrib.auth',  # реализует подсистему разграничения доступа
-    'django.contrib.contenttypes',  # хранит список всех моделей, объявленных во всехприложениях сайта.
+    'django.contrib.contenttypes',  # хранит список всех моделей, объявленных во всех приложениях сайта.
                                     # Необходимо при создании полиморфных связей между моделями
     'django.contrib.sessions',  # реализует подсистему, обслуживающую серверные сессии
     'django.contrib.messages',  # выводит всплывающие сообщения
@@ -53,7 +53,7 @@ MIDDLEWARE = [
                                                   # переданных сайту HTTP-методом POST
     'django.contrib.auth.middleware.AuthenticationMiddleware',  # добавляет в объект запроса атрибут, хранящий текущего
     # пользователя. Через этот атрибут в контроллерах и шаблонах можно выяснить, какой пользователь
-    # выполнил вход насайт и выполнил ли вообще
+    # выполнил вход на сайт и выполнил ли вообще
     'django.contrib.messages.middleware.MessageMiddleware',  # обрабатывает всплывающие сообщения на низком уровне
     'django.middleware.clickjacking.XFrameOptionsMiddleware',  # реализует дополнительную защиту сайта от сетевых атак
 ]
@@ -149,3 +149,6 @@ STATICFILES_DIRS = [
 # Media Folder Settings
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = 'accounts/login/'

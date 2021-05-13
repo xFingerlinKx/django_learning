@@ -48,5 +48,5 @@ urlpatterns = [
     path('detail/<int:pk>/', BbDetailView.as_view(), name='detail'),
     path('detail/<int:pk>/edit/', BbEditView.as_view(), name='edit'),
     path('detail/<int:pk>/delete/', BbDeleteView.as_view(), name='delete'),
-    path('', index, name='index')
+    path('', index, name='index'),
 ]
