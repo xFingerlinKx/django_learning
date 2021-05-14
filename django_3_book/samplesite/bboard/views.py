@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponseForbidden
 from django.shortcuts import render, get_list_or_404
 from django.views.generic.edit import CreateView, FormView, UpdateView, DeleteView
 from django.views.generic.base import TemplateView
@@ -7,6 +7,7 @@ from django.views.generic.list import ListView
 from django.views.generic.dates import ArchiveIndexView
 from django.urls import reverse_lazy, reverse
 from django.core.paginator import Paginator
+from django.contrib.auth.views import redirect_to_login
 
 from . models import Bb, Rubric
 from .forms import BbForm
@@ -27,28 +28,35 @@ django.http, или какого-либо из его подклассов. Эт
 
 
 def index(request):
-    bbs = Bb.objects.all()
-    rubrics = Rubric.objects.all()
-    paginator = Paginator(bbs, 2)
-    # Мы проверяем, присутствует ли в наборе GET-параметров, полученных в запросе,
-    # параметр раде. Если это так, извлекаем из него номер части, которую нужно вывести на странице.
-    # В противном случае подразумевается, что посетитель запрашивает первую часть, которую мы и выводим
-    if 'page' in request.GET:
-        page_num = request.GET['page']
+    if request.user.is_authenticated:
+        bbs = Bb.objects.all()
+        rubrics = Rubric.objects.all()
+        paginator = Paginator(bbs, 2)
+        # Мы проверяем, присутствует ли в наборе GET-параметров, полученных в запросе,
+        # параметр раде. Если это так, извлекаем из него номер части, которую нужно вывести на странице.
+        # В противном случае подразумевается, что посетитель запрашивает первую часть, которую мы и выводим
+        if 'page' in request.GET:
+            page_num = request.GET['page']
+        else:
+            page_num = 1
+        page = paginator.get_page(page_num)
+        # В контексте шаблона создаем переменную bbs, которой присваиваем список записей,
+        # входящих в запрошенную часть (его можно извлечь из атрибута object list части пагинатора)
+        return render(
+            request=request,
+            template_name='bboard/index.html',
+            context={
+                'bbs': page.object_list,
+                'rubrics': rubrics,
+                'page': page,
+            }
+        )
     else:
-        page_num = 1
-    page = paginator.get_page(page_num)
-    # В контексте шаблона создаем переменную bbs, которой присваиваем список записей,
-    # входящих в запрошенную часть (его можно извлечь из атрибута object list части пагинатора)
-    return render(
-        request=request,
-        template_name='bboard/index.html',
-        context={
-            'bbs': page.object_list,
-            'rubrics': rubrics,
-            'page': page,
-        }
-    )
+        return redirect_to_login(reverse(viewname='index'))
+        # return HttpResponseForbidden(
+        #     'Вы не имеете доступа к списку объявлений. '
+        #     'Пожалуйста авторизируйтесь.'
+        # )
 
 
 class BbDetailView(DetailView):
