@@ -5,6 +5,9 @@
     <title>{% block title %}Главная{% endblock %} :: Доска объявлений</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript jquery=True %}
 </head>
 <body>
     <header>

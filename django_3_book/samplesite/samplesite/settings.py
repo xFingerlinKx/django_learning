@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',  # обрабатывает статические файлы
     # подключаемые приложения
     'bboard.apps.BboardConfig',
+    'bootstrap4',
 
 ]
 # Посредник (middleware) Django — это программный модуль, выполняющий предварительную
