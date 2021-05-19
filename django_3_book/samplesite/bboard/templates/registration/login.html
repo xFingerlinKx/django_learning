@@ -12,6 +12,7 @@
     {{ form.as_p }}
     <input type="hidden" name="next" value="{{ next }}">
     <input type="submit" value="Войти">
+    <br><br><a href="{% url 'social:begin' 'vk-oauth2' %}">Войти через вконтакте</a>
 </form>
 {% endif %}
 {% endblock %}

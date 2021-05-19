@@ -13,6 +13,9 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+import social_core.backends.vk
+# import django.contrib.auth.backends
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -41,6 +44,7 @@ INSTALLED_APPS = [
     # подключаемые приложения
     'bboard.apps.BboardConfig',
     'bootstrap4',
+    'social_django',
 
 ]
 # Посредник (middleware) Django — это программный модуль, выполняющий предварительную
@@ -79,6 +83,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -116,6 +122,14 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.vk.VKOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_VK_OAUTH2_KEY = '7858882'
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'tl7cip6mICtKGXwuxjRa'
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

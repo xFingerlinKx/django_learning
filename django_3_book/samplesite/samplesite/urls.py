@@ -65,4 +65,6 @@ urlpatterns = [
     path('accounts/reset/done/', PasswordResetCompleteView.as_view(
         template_name='registration/password_confirmed.html'),
          name='password_reset_complete'),
+    # маршрут к контроллеру для регистрации и входа через ВК
+    path('social/', include('social_django.urls', namespace='social')),
 ]
