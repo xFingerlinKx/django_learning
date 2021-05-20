@@ -1,5 +1,6 @@
 from django.db import models
-from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from .validators import validate_even
 
 """
@@ -48,6 +49,12 @@ IntegrityError из модуля django.db. Если поле помечено �
 его в форме). По умолчанию — True;
 - db_column - имя поля таблицы в виде строки. Если не указано, то поле таблицы получит то же имя, что и поле модели;
 """
+
+
+class Profile(models.Model):
+    """ Расширение модели пользвателя """
+    phone = models.CharField(max_length=20)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 
 class Bb(models.Model):
