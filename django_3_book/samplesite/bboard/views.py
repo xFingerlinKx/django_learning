@@ -197,6 +197,7 @@ class BbCreateView(CreateView):
     # Функция reverse_lazy() принимает имя маршрута и значения всех входящих в маршрут URL-параметров
     # (если они там есть). Результатом станет готовый интернет-адрес
     success_url = reverse_lazy('index')
+    success_message = 'Объявление о продаже товара "% (title) s" создано.'
 
     def get_context_data(self, **kwargs):
         """

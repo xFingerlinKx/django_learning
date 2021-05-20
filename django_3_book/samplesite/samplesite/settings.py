@@ -167,3 +167,11 @@ MEDIA_URL = '/media/'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = 'accounts/login/'
+
+# имя класса, реализующего хранилище всплывающих сообщений, представленное в виде строки.
+# В составе Django поставляются три хранилища всплывающих сообщений:
+# 1) django.contrib.messages.storage.cookie.CookieStorage
+# 2) django.contrib.messages.storage.session.SessionStorage
+# 3) django.contrib.messages.storage.fallback.FallbackStorage - использует cookie для хранения сообщений, чей объем не
+# превышает 4 Кбайт, а более объемные сохраняет в сессии
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
